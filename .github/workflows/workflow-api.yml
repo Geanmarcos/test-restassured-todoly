@@ -1,0 +1,31 @@
+name: CrudAPI Todo.ly
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  crud-api-test:
+    runs-on: ubuntu-latest
+
+    env:
+      USERNAME_TODOLY: ${{ secrets.USERNAME_TODOLY }}
+      PASSWORD_TODOLY: ${{ secrets.PASSWORD_TODOLY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Run CrudAPI test
+        run: ./gradlew test --tests testTodolyApi.CrudApi --rerun-tasks --console=plain

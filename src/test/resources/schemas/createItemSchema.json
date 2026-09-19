@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org",
+  "id": "http://json-schema.org",
+  "type": "object",
+  "required": [
+    "Id",
+    "Content",
+    "ItemType",
+    "Checked",
+    "ProjectId",
+    "ParentId",
+    "Path",
+    "Collapsed",
+    "DateString",
+    "DateStringPriority",
+    "DueDate",
+    "Recurrence",
+    "ItemOrder",
+    "Priority",
+    "LastSyncedDateTime",
+    "Children",
+    "CreatedDate",
+    "LastCheckedDate",
+    "LastUpdatedDate",
+    "Deleted"
+  ],
+  "properties": {
+    "Id": { "type": "number" },
+    "Content": { "type": ["string", "null"] },
+    "ItemType": { "type": "number" },
+    "Checked": { "type": ["boolean", "null"] },
+    "ProjectId": { "type": ["number", "null"] },
+    "ParentId": { "type": ["number", "null"] },
+    "Path": { "type": ["string", "null"] },
+    "Collapsed": { "type": ["boolean", "null"] },
+    "DateString": { "type": ["string", "null"] },
+    "DateStringPriority": { "type": "number" },
+    "DueDate": { "type": ["string", "null"] },
+    "Recurrence": { "type": ["object", "null"] },
+    "ItemOrder": { "type": ["number", "null"] },
+    "Priority": { "type": ["number", "null"] },
+    "LastSyncedDateTime": { "type": ["string", "null"] },
+    "Children": {
+      "type": "array",
+      "items": { "$ref": "#" }
+    },
+    "CreatedDate": { "type": ["string", "null"] },
+    "LastCheckedDate": { "type": ["string", "null"] },
+    "LastUpdatedDate": { "type": ["string", "null"] },
+    "Deleted": { "type": ["boolean", "null"] }
+  }
+}
