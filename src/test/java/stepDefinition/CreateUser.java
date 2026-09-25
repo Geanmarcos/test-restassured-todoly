@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 public class CreateUser {
-    @Given("que tengo acceso a todoly")
+    @Given("que tengo acceso a un api")
     public void queTengoAccesoATodoly() {
-        System.out.println("que tengo acceso a todoly");
+        System.out.println("que tengo acceso a un api");
     }
 
     @When("me registro con")
@@ -28,14 +28,28 @@ public class CreateUser {
         System.out.println("registro de usuarios exitosos");
     }
 
+//    @When("me registro usando")
+//    public void meRegistroUsando(User user) {
+//        System.out.println("nombre: " + user.getNombre());
+//        System.out.println("apellidos: " + user.getApellidos());
+//        System.out.println("telefono: " + user.getTelefono());
+//        System.out.println("direccion: " + user.getDireccion());
+//        System.out.println("dni: " + user.getDni());
+//    }
+
+
     @When("me registro usando")
-    public void meRegistroUsando(User user) {
-        System.out.println("nombre: " + user.getNombre());
-        System.out.println("apellidos: " + user.getApellidos());
-        System.out.println("telefono: " + user.getTelefono());
-        System.out.println("direccion: " + user.getDireccion());
-        System.out.println("dni: " + user.getDni());
-    }
+    public void meRegistroUsando(List<User> users) {
+        for (User user : users){
+            System.out.println("nombre: " + user.getNombre());
+            System.out.println("apellidos: " + user.getApellidos());
+            System.out.println("telefono: " + user.getTelefono());
+            System.out.println("direccion: " + user.getDireccion());
+            System.out.println("dni: " + user.getDni());
+        }
+   }
+
+
 
     @DataTableType
     public User convertToUser(Map<String,String> data){
@@ -55,5 +69,10 @@ public class CreateUser {
                 data.get("dni")
         );
 
+    }
+
+    @Then("deberia ver sus terminos de aceptacion")
+    public void deberiaVerSusTerminosDeAceptacion(String data) {
+        System.out.println("deberia ver sus terminos de aceptacion \n"+data);
     }
 }

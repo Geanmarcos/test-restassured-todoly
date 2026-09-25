@@ -30,3 +30,23 @@ test {
         events "passed", "skipped", "failed", "standardOut", "standardError"
     }
 }
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+tasks.register('cucumber', JavaExec) {
+    dependsOn assemble, testClasses
+    mainClass = "io.cucumber.core.cli.Main"
+    classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+    args = [
+            "--plugin", "pretty",
+            "--plugin", "html:target/cucumber-report.html",
+            "--plugin", "html:target/cucumber-report.json",
+            "--glue", "stepDefinition",
+            "src/test/resources",
+            "--tags", project.findProperty("suite") ?: "@SmokeTest"
+    ]
+}
