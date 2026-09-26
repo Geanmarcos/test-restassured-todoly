@@ -16,6 +16,10 @@ dependencies {
     testImplementation("io.rest-assured:rest-assured:6.0.1")
     implementation("org.json:json:20260814")
     implementation("io.rest-assured:json-schema-validator:6.0.1")
+    implementation("io.cucumber:cucumber-java:7.34.8")
+    testImplementation("io.cucumber:cucumber-junit-platform-engine:7.34.8")
+    testImplementation("org.projectlombok:lombok:1.18.48")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.48")
 }
 
 test {
@@ -25,4 +29,24 @@ test {
         showStandardStreams = true
         events "passed", "skipped", "failed", "standardOut", "standardError"
     }
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+tasks.register('cucumber', JavaExec) {
+    dependsOn assemble, testClasses
+    mainClass = "io.cucumber.core.cli.Main"
+    classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+    args = [
+            "--plugin", "pretty",
+            "--plugin", "html:target/cucumber-report.html",
+            "--plugin", "json:target/cucumber-report.json",
+            "--glue", "stepDefinition",
+            "src/test/resources",
+            "--tags", project.findProperty("suite") ?: "@TestCrudClean"
+    ]
 }

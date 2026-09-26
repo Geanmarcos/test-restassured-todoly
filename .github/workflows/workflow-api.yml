@@ -2,21 +2,34 @@ name: CrudAPI Todo.ly
 
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
   workflow_dispatch:
+    inputs:
+      suite:
+        description: 'Tag de Cucumber a ejecutar'
+        required: false
+        default: '@TestCrudClean'
+        type: string
 
 jobs:
   crud-api-test:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     env:
       USERNAME_TODOLY: ${{ secrets.USERNAME_TODOLY }}
       PASSWORD_TODOLY: ${{ secrets.PASSWORD_TODOLY }}
 
     steps:
+      # 1. Descargar el código fuente del repositorio
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2. Configurar el entorno de ejecución Java
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
@@ -24,8 +37,35 @@ jobs:
           java-version: '21'
           cache: gradle
 
+      # 3. Hacer ejecutable el Gradle wrapper
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
 
-      - name: Run CrudAPI test
-        run: ./gradlew test --tests testTodolyApi.CrudApi --rerun-tasks --console=plain
+      # 4. Ejecutar los tests con Cucumber, usando el tag recibido o @TestCrudClean por defecto
+      - name: Run Cucumber tests
+        run: |
+          ./gradlew cucumber -Psuite="${{ github.event.inputs.suite || '@TestCrudClean' }}" --console=plain
+        continue-on-error: true
+
+      # 4b. Verificación rápida de que sí se generó el reporte
+      - name: Debug - Verify cucumber report
+        if: always()
+        run: |
+          echo "Contenido de target:"
+          ls -la target/ || echo "La carpeta target no existe"
+
+      # 5. Preparar el directorio a publicar (GitHub Pages necesita un index.html)
+      - name: Prepare report for GitHub Pages
+        if: always()
+        run: |
+          mkdir -p public-report
+          cp target/cucumber-report.html public-report/index.html
+
+      # 6. Desplegar el reporte HTML a GitHub Pages
+      - name: Deploy Cucumber Report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: public-report

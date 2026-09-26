@@ -1,0 +1,61 @@
+package stepDefinition;
+
+import factory.ApiClient;
+import io.cucumber.java.PendingException;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import io.restassured.module.jsv.JsonSchemaValidator;
+import io.restassured.response.Response;
+import static org.hamcrest.Matchers.equalTo;
+
+import java.util.Base64;
+
+public class testTodolyClientApi {
+    private ApiClient client = new ApiClient();
+    private Response response;
+    private String usuario;
+    private String clave;
+
+    @Given("i have acces to todo.ly")
+    public void iHaveAccesToTodoLy() {
+        usuario = System.getenv("USERNAME_TODOLY");
+        clave = System.getenv("PASSWORD_TODOLY");
+
+        String credenciales = usuario+":"+clave;
+        client.addHeaders("Authorization", "Basic " + Base64.getEncoder().encodeToString(credenciales.getBytes()));
+    }
+
+    @When("i send a {word} request to {string} with body")
+    public void iSendAPOSTRequestToWithBody(String method, String path, String body) {
+        response = client.send(method, path, body);
+    }
+
+    @Then("response code is {int}")
+    public void responseCodeIs(int responseCodeExpected) {
+        response.then().statusCode(responseCodeExpected);
+    }
+
+    @And("the attribute {word} {string} is {string}")
+    public void theAttributeStringIs(String type, String attribute, String expectedResult) {
+        String resolvedExpectedResult = client.resolverVariable(expectedResult);
+
+        switch (type.toLowerCase()) {
+            case "int" -> response.then().body(attribute, equalTo(Integer.parseInt(resolvedExpectedResult)));
+            case "boolean" -> response.then().body(attribute, equalTo(Boolean.parseBoolean(resolvedExpectedResult)));
+            case "string" -> response.then().body(attribute, equalTo(resolvedExpectedResult));
+        }
+    }
+
+    @And("i save the value of {string} in the variable {string}")
+    public void iSaveTheValueOfInTheVariable(String jsonVariable, String variableName) {
+        String value = response.jsonPath().getString(jsonVariable);
+        client.addVariable(variableName, value);
+    }
+
+    @And("the response matches the schema {string}")
+    public void theResponseMatchesTheSchema(String schemaPath) {
+        response.then().body(JsonSchemaValidator.matchesJsonSchemaInClasspath(schemaPath));
+    }
+}
