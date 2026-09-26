@@ -79,25 +79,25 @@ Feature: testTodoLy
     And the attribute int "ProjectId" is "{projectId}"
     And the response matches the schema "schemas/createItemSchema.json"
 
-#    #detele item
-#    When i send a DELETE request to "/api/items/{itemId}.json" with body
-#    """
-#    """
-#    Then response code is 200
-#    And the attribute string "Content" is "Pepito V2"
-#    And the attribute boolean "Checked" is "true"
-#    And the attribute int "ProjectId" is "{projectId}"
-#    And the attribute boolean "Deleted" is "true"
-#    And the response matches the schema "schemas/createItemSchema.json"
-#
-#    #delete project
-#    When i send a DELETE request to "/api/projects/{projectId}.json" with body
-#    """
-#    """
-#    Then response code is 200
-#    And the attribute string "Content" is "CleanV2"
-#    And the attribute int "Icon" is "11"
-#    And the attribute boolean "Deleted" is "true"
-#    And the response matches the schema "schemas/createProjectSchema.json"
+    #detele item
+    When i send a DELETE request to "/api/items/{itemId}.json" with body
+    """
+    """
+    Then response code is 200
+    And the attribute string "Content" is "Pepito V2"
+    And the attribute boolean "Checked" is "true"
+    And the attribute int "ProjectId" is "{projectId}"
+    And the attribute boolean "Deleted" is "true"
+    And the response matches the schema "schemas/createItemSchema.json"
+
+    #delete project
+    When i send a DELETE request to "/api/projects/{projectId}.json" with body
+    """
+    """
+    Then response code is 200
+    And the attribute string "Content" is "CleanV2"
+    And the attribute int "Icon" is "11"
+    And the attribute boolean "Deleted" is "true"
+    And the response matches the schema "schemas/createProjectSchema.json"
 
 
