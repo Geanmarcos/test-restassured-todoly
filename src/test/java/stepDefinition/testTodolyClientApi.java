@@ -15,10 +15,15 @@ import java.util.Base64;
 public class testTodolyClientApi {
     private ApiClient client = new ApiClient();
     private Response response;
+    private String usuario;
+    private String clave;
 
     @Given("i have acces to todo.ly")
     public void iHaveAccesToTodoLy() {
-        String credenciales = "geanmarcos.tataje@gmail.com:TestingJB$.";
+        usuario = System.getenv("USERNAME_TODOLY");
+        clave = System.getenv("PASSWORD_TODOLY");
+
+        String credenciales = usuario+":"+clave;
         client.addHeaders("Authorization", "Basic " + Base64.getEncoder().encodeToString(credenciales.getBytes()));
     }
 

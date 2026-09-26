@@ -44,9 +44,9 @@ tasks.register('cucumber', JavaExec) {
     args = [
             "--plugin", "pretty",
             "--plugin", "html:target/cucumber-report.html",
-            "--plugin", "html:target/cucumber-report.json",
+            "--plugin", "json:target/cucumber-report.json",
             "--glue", "stepDefinition",
             "src/test/resources",
-            "--tags", project.findProperty("suite") ?: "@SmokeTest"
+            "--tags", project.findProperty("suite") ?: "@TestCrudClean"
     ]
 }
