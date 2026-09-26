@@ -6,6 +6,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.restassured.module.jsv.JsonSchemaValidator;
 import io.restassured.response.Response;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -33,10 +34,12 @@ public class testTodolyClientApi {
 
     @And("the attribute {word} {string} is {string}")
     public void theAttributeStringIs(String type, String attribute, String expectedResult) {
+        String resolvedExpectedResult = client.resolverVariable(expectedResult);
+
         switch (type.toLowerCase()) {
-            case "int" -> response.then().body(attribute, equalTo(Integer.parseInt(expectedResult)));
-            case "boolean" -> response.then().body(attribute, equalTo(Boolean.parseBoolean(expectedResult)));
-            case "string" -> response.then().body(attribute, equalTo(expectedResult));
+            case "int" -> response.then().body(attribute, equalTo(Integer.parseInt(resolvedExpectedResult)));
+            case "boolean" -> response.then().body(attribute, equalTo(Boolean.parseBoolean(resolvedExpectedResult)));
+            case "string" -> response.then().body(attribute, equalTo(resolvedExpectedResult));
         }
     }
 
@@ -44,5 +47,10 @@ public class testTodolyClientApi {
     public void iSaveTheValueOfInTheVariable(String jsonVariable, String variableName) {
         String value = response.jsonPath().getString(jsonVariable);
         client.addVariable(variableName, value);
+    }
+
+    @And("the response matches the schema {string}")
+    public void theResponseMatchesTheSchema(String schemaPath) {
+        response.then().body(JsonSchemaValidator.matchesJsonSchemaInClasspath(schemaPath));
     }
 }

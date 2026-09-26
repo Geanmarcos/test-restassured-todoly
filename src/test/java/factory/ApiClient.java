@@ -16,14 +16,15 @@ public class ApiClient {
     public Response send(String method, String path, String body) {
 
         String url = "https://todo.ly" + resolverVariable(path);
+        String resolvedBody = resolverVariable(body);
 
         RequestSpecification request =
                 given()
                         .headers(headers)
                         .log().all();
 
-        if (body != null && !body.isBlank()) {
-            request.body(body);
+        if (resolvedBody != null && !resolvedBody.isBlank()) {
+            request.body(resolvedBody);
         }
 
         Response response = switch (method.toUpperCase()) {
@@ -50,11 +51,14 @@ public class ApiClient {
         headers.put(key, value);
     }
 
-    private String resolverVariable(String path) {
-        for (var entry : variables.entrySet()) {
-            path = path.replace("{" + entry.getKey() + "}", entry.getValue());
+    public String resolverVariable(String text) {
+        if (text == null) {
+            return null;
         }
-        return path;
+        for (var entry : variables.entrySet()) {
+            text = text.replace("{" + entry.getKey() + "}", entry.getValue());
+        }
+        return text;
     }
 
 }
