@@ -32,9 +32,10 @@ public class testTodolyClientApi {
         response = client.send(method, path, body);
     }
 
-    @Then("response code is {int}")
-    public void responseCodeIs(int responseCodeExpected) {
-        response.then().statusCode(responseCodeExpected);
+    @Then("response code is {string}")
+    public void responseCodeIs(String responseCodeExpected) {
+        int code = Integer.parseInt(responseCodeExpected);
+        response.then().statusCode(code);
     }
 
     @And("the attribute {word} {string} is {string}")
